@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project name="capegroup" basedir="." default="jar">
+
+    <!-- Setup all properties to use later -->
+    <property name="src.dir"     value="src"/>
+
+    <property name="build.dir"   value="build"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="jar.dir"     value="${build.dir}/jar"/>
+    <property name="lib.dir" value="lib"/>
+
+    <property name="main-class"  value="capegroup.installer.Main"/>
+    
+    <!-- Put libaries in classpath -->
+    <path id="classpath">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    </path>
+
+    <!-- Compile the raw classes with Javac -->
+    <target name="compile">
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath" includeantruntime="false"/>
+    </target>
+
+    <!-- Jar everything -->
+    <target name="jar" depends="compile">
+        <!-- Create directory for jars -->
+        <mkdir dir="${jar.dir}"/>
+
+        <!-- Move resources in /src to /build/classes for compiling -->
+        <copy todir="build/classes">
+            <fileset dir="src" excludes="**/*.java"/>
+        </copy>
+
+        <!-- Start packaging libary jar -->
+        <jar jarfile="${jar.dir}/external-libs.jar">
+        
+            <!-- Exclude all meta-inf's from libaries, so we don't get weird errors on starting -->
+            <zipgroupfileset dir="lib/" excludes="META-INF/**/*">
+                <!-- Add libary jars to external-libs -->
+                <include name="**/*.jar"/>
+            </zipgroupfileset>
+        </jar>
+        
+        <!-- Start packaging main jar-->
+        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+            <!-- Create a manifest with the main class so it's runnable-->
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <!-- Add the external-libs jar into the main jar -->
+            <zipfileset src="${jar.dir}/external-libs.jar">
+                <exclude name="*"/>
+            </zipfileset>
+        </jar>
+    </target>
+</project>
