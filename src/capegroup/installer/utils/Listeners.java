@@ -38,7 +38,7 @@ public class Listeners {
 	
 	public static void setupSocial(Main main) {
 		main.discord.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent e) {OpenUrl.url("https://discord.gg/y9BUsHSREg");}
+			@Override public void actionPerformed(ActionEvent e) {OpenUrl.url("https://discord.gg/x4g6sGd3uD");}
 		});
 		
 		main.twitter.addActionListener(new ActionListener() {
